@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block head %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewpoint" content="width=device-width, initial-scale=1.0">
+        <title>概览图</title>
+{#        <link rel="stylesheet" href="../static/css/index_2.css">#}
+        <link rel="stylesheet" href="{{ url_for('static', filename='/css/index_2.css') }}">
+        <link rel="stylesheet" href="../static/css/yewu.css">
+        <script type="text/javascript" src="../static/js/dongtai.js"></script>
+        <script type="text/javascript" src="../static/js/echarts.min.js"></script>
+        <script type="text/javascript" src="../static/js/jquery.min.js"></script>
+        <script type="text/javascript" src="../static/js/num_roll.js"></script>
+        <script type="text/javascript" src="../static/js/echarts-3.7.0.js"></script>
+        <script type="text/javascript" src="../static/js/echarts-liquidfill.js"></script>
+    </head>
+{% endblock %}
+<script>
+    $(document).ready(function () {
+        $.get('/radar',function (html) {
+            //获取左侧的雷达图
+            $(".left_index").html(html);});
+        $.get('/table1',function (html) {
+            //获取中间下方的表格
+            $("#table").html(html);});
+
+        $("#month").change(function () {
+            var m = $("#month option:selected").val();
+            $.ajax({
+                url: '/radar',
+                type:'post',
+                data: m,
+                success: function (html){
+                    $(".left_index").html(html).fadeIn(2000);
+                } });
+        });
+        $("#asset").click(function (){
+            location.href ='/finance';
+        });
+        $("#aum").click(function (){
+            location.href ='/business';
+        });
+
+    });
+
+</script>
+
+<body>
+{% block nav %}
+    <nav>
+        <ul>
+            <li class="nav_active _left"><a  href={{ url_for('index') }}>主要指标</a></li>
+            <li class="_left"><a  href={{ url_for("finance") }}>财务情况</a></li>
+
+        </ul>
+        <ul><li class="index_middle"><h1>2021年SWIFT银行财务数据可视化</h1></li></ul>
+        <ul>
+            <li class="_right"><a href={{ url_for("predict") }}>预测分析</a></li>
+            <li class="_right"><a href={{ url_for("business") }}>业务情况</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+{% block subnav %}
+{% endblock %}
+<!--页面主体部分-->
+{% block main %}
+
+    <div class="mainbox">
+        <div class="column">
+            <div>
+                <select name="月份" id="month" style="width: 10rem">
+                    <!--<option value=" " selected="selected">请选择月份</option>-->
+                    <option class="op" value="1" >1季度</option>
+                    <option class="op" value="2">2季度</option>
+                    <option class="op" value="3">3季度</option>
+                    <option class="op" value="4">4季度</option>
+                </select>
+            </div>
+            <div class="left_index">
+                <div class="panel">
+                    <div class="panelfoot"></div>
+                </div>
+                <div class="panel">
+                    <div class="panelfoot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!--        中间部分-->
+        <div class="column">
+            <!--数字模块-->
+            <div class="no">
+                <div class="no-top">
+                    <ul>
+                        <li>{{ form.current_asset }}</li>
+                            <!--<div id="data1" class="myroll"></div>-->
+                        <li>{{ form.current_deposit }}</li>
+                            <!--<div id="data2" class="myroll2"></div>-->
+
+                    </ul>
+
+                    <!--<script type="text/javascript">
+                        var totalNum = 5185183;
+                        var totalNum2= 6242891;
+
+                        var r1 = new DigitRoll({
+                            container: "#data1",
+                            width: 7,
+                        });
+                        r1.roll(totalNum);
+                        var r2 = new DigitRoll({
+                            container: "#data2",
+                            width: 7,
+                        });
+                        r2.roll(totalNum2);
+
+                        setInterval(function () {
+                            totalNum += parseInt(Math.random() * 100);
+                            r1.roll(totalNum);
+                        }, 3000);
+
+                        setInterval(function () {
+                            totalNum2 += parseInt(Math.random() * 100);
+                            r2.roll(totalNum2);
+                        }, 3000);
+                    </script>-->
+
+
+                </div>
+                <div class="no-btm">
+                    <ul>
+                        <li>存款总额(百万元)</li>
+                        <li>贷款总额(百万元)</li>
+                    </ul>
+                </div>
+
+            </div>
+                <div id="map">
+            </div>
+
+            <div id="table"></div>
+        </div>
+
+        <!--        右侧部分-->
+        <div class="column">
+            <div style="height: 1rem"></div>
+            <div class="right_index">
+                <div class="panel">
+                    <div class="charttitle" id="asset">资产规模</div>
+                    <div class="chart" id="echart3"></div>
+                    <div class="panelfoot"></div>
+                </div>
+                <div class="panel">
+                    <div class="charttitle" id="aum">AUM</div>
+                    <div class="chart" id="echart4"></div>
+                    <div class="panelfoot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+<script type="text/javascript" src="../static/js/echarts.min.js"></script>
+{#<script type="text/javascript" src="../static/js/Charts.js"></script>#}
+{#<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>#}
+{#<script type="text/javascript" src="../static/js/jquery.min.js"></script>#}
+<script type="text/javascript" src="../static/js/china.js"></script>
+<script type="text/javascript" src="../static/js/app.js"></script>
+<script type="text/javascript" src="../static/js/citymap.js"></script>
+{#<script type="text/javascript" src="../static/js/Charts_asset_sum.js"></script>#}
+<script type="text/javascript" src="../static/js/dongtai.js"></script>
+<script>
+
+
+(function (){
+    var myChart3 = echarts.init(document.getElementById('echart3'));
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        grid:{x:50},
+        legend: {
+            textStyle: {fontsize:18, color:'#ffffff'},
+            data: ['财务-资产(亿)' , '增速']
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: {{form.month|safe}},
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel:{
+                    textStyle: {fontsize:18, color:'#ffffff'}
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '财务-资产(亿)',
+                min: 0,
+                max: 60000,
+                splitNumber : 5,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'#ffffff'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            },
+            {
+                type: 'value',
+                name: '增速',
+                min: -24,
+                max: 12,
+                splitNumber : 5,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:5, color:'#ffffff'},
+                    formatter: '{value}%'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        series: [
+            {
+                name: '财务-资产(亿)',
+                color: '#ff8302',
+                type: 'bar',
+                barWidth:'40%',
+                //data: [60.67,67.41,69.50,70.99,74.73,78.66],
+                data:{{ form.Asset }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 12
+                            }
+                        },
+                        barBorderRadius: 11,
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#fccb05'
+                            },
+                            {
+                                offset: 1,
+                                color: '#f5804d'
+                            }
+                        ]),
+                    }
+                }
+            },
+            {
+                name: '增速',
+                color: '#F6E331',
+                type: 'line',
+                smooth:true,//设置折线图平滑
+                yAxisIndex: 1,
+                data: {{ form.growth1 }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: false,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            },
+        ]
+    };
+    myChart3.setOption(option);
+    tools.loopShowTooltip(myChart3, option, {
+        loopSeries: true
+    });
+})();
+
+(function (){
+    var myChart4 = echarts.init(document.getElementById('echart4'));
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'}}
+        },
+        grid:{x:50},
+        legend: {
+            textStyle: {fontsize:18, color:'#ffffff'},
+            data: ['业务-AUM(亿)' , '增速']
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: {{ form.month|safe}},
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel:{
+                    textStyle: {fontsize:18, color:'#ffffff'}
+                },
+                axisTick: {show: false},
+                splitLine: {show:false}
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '业务-AUM(亿)',
+                min: 0,
+                max: 40000,
+                splitNumber : 5,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'#ffffff'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            },
+            {
+                type: 'value',
+                name: '增速',
+                min: -30,
+                max: 14,
+                splitNumber : 5,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:5, color:'#ffffff'},
+                    formatter: '{value}%'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        series: [
+            {
+                name: '业务-AUM(亿)',
+                color: '#ff8302',
+                type: 'bar',
+                barWidth:'40%',
+                data: {{ form.Deposit }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white', fontSize: 12
+                            }
+                        },
+                        barBorderRadius: 11,
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#fccb05'
+                            },
+                            {
+                                offset: 1,
+                                color: '#f5804d'
+                            }
+                        ]),
+                    }
+                }
+            },
+            {
+                name: '增速',
+                color: '#F6E331',
+                type: 'line',
+                smooth:true,//设置折线图平滑
+                yAxisIndex: 1,
+                data: {{ form.growth2 }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: false,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    myChart4.setOption(option);
+    tools.loopShowTooltip(myChart4, option, {
+        loopSeries: true
+    });
+})();
+
+</script>
+
+
+</body>
+</html>
