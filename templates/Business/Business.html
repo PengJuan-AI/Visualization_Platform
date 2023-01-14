@@ -1,0 +1,993 @@
+{% extends "Index.html" %}
+
+
+{% block nav %}
+<nav>
+    <ul>
+        <li class="_left"><a  href={{ url_for('index') }}>主要指标</a></li>
+        <li class=" _left"><a  href={{ url_for("finance") }}>财务情况</a></li>
+
+    </ul>
+    <ul><li class="index_middle"><h1 style="font-size:24px;text-align:right">2021年SWIFT银行财务数据可视化</h1></li></ul>
+    <ul>
+        <li class="_right"><a href={{ url_for("predict") }}>预测分析</a></li>
+        <li class="nav_active _right"><a href={{ url_for("business") }}>业务情况</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block subnav %}
+
+{% endblock %}
+{% block main %}
+<script type="text/javascript" src="../static/js/num_roll.js"></script>
+    <script>
+    $(document).ready(function () {
+    $.get('/usrpic', function ( html) {
+        //获取底部的客户信息
+        $(".usr").html(html);
+    });
+    $("#prod").change(function () {
+
+            var m = $("#prod option:selected").val();
+            $.ajax({
+                url: '/usrpic',
+                type:'post',
+                data: m,
+                success: function (html){
+                    $(".usr").html(html).fadeIn(2000);
+                    //$(".panel").html(template("chart1", data));
+                } });
+        });
+});
+
+</script>
+
+<div class="mainbox_yewu">
+    <div class="column">
+        <div class="left_index">
+            <div class="panel_samll">
+                <div class="charttitle">零售客户数</div>
+                <div class="chart_small" id="business4"></div>
+                <div class="panelfoot"></div>
+            </div>
+            <div class="panel_samll">
+                <div class="charttitle">私人银行财富管理额</div>
+                <div class="chart_small" id="business1"></div>
+                <div class="panelfoot"></div>
+            </div>
+            <div class="panel_samll" style="height: 17rem">
+                <div class="charttitle">财富管理手续费收入</div>
+                <div class="chart_small" id="business3" ></div>
+                <div class="panelfoot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!--        中间部分-->
+    <div class="column">
+        <!--数字模块-->
+        <div class="no">
+            <div class="no-top">
+                <ul>
+                    <li>
+                       {{ form.monthly_new|safe }}
+                    </li>
+                </ul>
+            </div>
+            <div class="no-btm">
+                <ul>
+                    <li>月新增客户数</li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="no">
+            <div class="no-top">
+                <ul>
+                    <li>{{ form.YoY }}</li>
+                    <li>{{ form.QoQ }}</li>
+                </ul>
+            </div>
+            <div class="no-btm">
+                <ul>
+                    <li>同比增速</li>
+                    <li>环比增速</li>
+                </ul>
+            </div>
+        </div>
+        <div class="no">
+            <div class="no-top">
+                <ul>
+                    <li>5607.18</li>
+                </ul>
+            </div>
+            <div class="no-btm">
+                <ul>
+                    <li>月活跃客户(万)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="no">
+            <div class="no-top">
+                <ul>
+                    <!--<li> <div id="data3" class="myroll3"></div>  </li>-->
+                    <li>{{ form.digitalize }}</li>
+                </ul>
+            </div>
+            <div class="no-btm">
+                <ul>
+                    <li>数字化获客占比</li>
+                </ul>
+            </div>
+        </div>
+
+        <div>
+            <select id="prod" style="width: 10rem">
+            <!--<option value=" " selected="selected">请选择月份</option>-->
+                <option value="A" >产品A</option>
+                <option value="B">产品B</option>
+                <option value="C">产品C</option>
+            </select>
+        </div>
+        <div class="usr"></div>
+
+    </div>
+
+    <!--     右侧-->
+    <div class="column">
+        <div class="right_index">
+            <div class="panel_samll">
+                <div class="charttitle">线上(app)线下获客量</div>
+                <div class="chart_small" id="business2"></div>
+                <div class="panelfoot"></div>
+            </div>
+            <div class="panel_samll">
+                <div class="charttitle">APP理财投资金额</div>
+                <div class="chart_small" id="business5"></div>
+                <div class="panelfoot"></div>
+            </div>
+            <div class="panel_samll" style="height: 17rem">
+                <div class="charttitle">App各类型交易金额占比</div>
+                <div class="chart_small" id="business6"></div>
+                <div class="panelfoot"></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+    <script>
+    $(function (){
+    var myChart4 = echarts.init(document.getElementById('business4'));
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: { show: false, readOnly: false },
+                magicType: { show: false, type: ['line', 'bar'] },
+                restore: { show: false },
+                saveAsImage: { show: false }
+            }
+        },
+        legend: {
+            data: ['高级客户数', '零售客户数'],
+            textStyle:{color:'#ffffff'}
+        },
+        xAxis: [
+            {
+                type: 'category',
+                //data: ["1月", "2月", "3月", "4月", "5月","6月"],
+                data:{{ form.month|safe }},
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel:{
+                    textStyle: {fontsize:18, color:'#ffffff'}
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '客户规模(万)',
+                min: 0,
+                max: 1000,
+                interval: 1000,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12 // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value} '
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            },
+            /**
+            {
+                type: 'value',
+                name: '占比(%)',
+                min: 100,
+                max: 60,
+                //interval: 200,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12 // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value} '
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                },
+                splitNumber:3
+            }
+            **/
+        ],
+        series: [
+            {
+                name: '高级客户数',
+                type: 'bar',
+                barWidth:'40%',
+                //data: [123, 154, 163,193, 241, 301],
+                data:{{ form.xAxis2 }},
+                itemStyle: {
+                    normal: {
+                        // color:'#ff7c09',
+                        label: {
+                            show: true, //开启显示
+                            position: 'top', //在上方显示
+                            textStyle: {
+                                //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        },
+                         barBorderRadius: 5,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#fccb05'
+                            },
+                            {
+                                offset: 1,
+                                color: '#f5804d'
+                            }
+                        ]),
+                    }
+                }
+            },
+            {
+                name: '零售客户数',
+                type: 'bar',
+                barWidth:'40%',
+                //data: [1290, 1350, 1380,1430, 1500, 1580],
+                data:{{ form.xAxis1 }},
+                itemStyle: {
+                    normal: {
+                      // color:'#7FC668',
+                        label: {
+                            show: true, //开启显示
+                            position: 'top', //在上方显示
+                            textStyle: {
+                                //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        },
+                         barBorderRadius: 5,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#7FC668'
+                            },
+                            {
+                                offset: 1,
+                                color: '#10A674'
+                            }
+                        ]),
+                    }
+                }
+            },
+            /**
+            {
+                name: '高级用户AUM占比(%)',
+                type: 'line',
+                smooth:true,//设置折线图平滑
+                yAxisIndex: 1,
+                data: [85.04,84.04,84.74,84.24,84.94,85.24],
+                itemStyle: {
+                    normal: {
+                       color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#248ff7'
+                            },
+                            {
+                                offset: 1,
+                                color: '#6851f1'
+                            }
+                        ]),
+                        label: {
+                            show: false, //开启显示
+                            position: 'top', //在上方显示
+                            textStyle: {
+                                //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+            **/
+        ]
+    };
+
+    myChart4.setOption(option);
+    // tools.loopShowTooltip(myChart4, option, {
+    //   loopSeries: true
+    // });
+});
+    $(function (){
+    var myChart1 = echarts.init(document.getElementById('business1'));
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        legend: {
+            textStyle: {fontsize:18, color:'#ffffff'},
+            data: ['财富管理规模(百万)' ]
+        },
+        grid:{x:55, x2:50},
+        xAxis: [
+            {
+                type: 'category',
+                //data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                data: {{ form.month|safe }},
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel:{
+                    textStyle: {fontsize:18, color:'#ffffff'}
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '财富管理规模(百万)',
+                min: 0,
+                max: 600,
+                splitNumber : 3,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            },
+            /**
+            {
+                type: 'value',
+                name: '变化率(%)',
+                min: 0,
+                max: 10,
+                splitNumber : 3,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:5, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+            **/
+        ],
+        series: [
+            {
+                name: '财富管理规模(百万)',
+                color: '#ff8302',
+                type: 'bar',
+                barWidth:'40%',
+                //data: [443.95, 466.68, 491.25, 512.30,527.10, 544.31],
+                data:{{ form.ivstment }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 14
+                            }
+                        },
+                          barBorderRadius: 5,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#fccb05'
+                            },
+                            {
+                                offset: 1,
+                                color: '#f5804d'
+                            }
+                        ]),
+                    }
+                }
+            },
+            /**
+            {
+                name: '变化率(%)',
+                color: '#F6E331',
+                type: 'line',
+                smooth:true,//设置折线图平滑
+                yAxisIndex: 1,
+                data: [3.22, 5.12, 5.26, 5.4,7.30,3.27],
+                itemStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#248ff7'
+                            },
+                            {
+                                offset: 1,
+                                color: '#6851f1'
+                            }
+                        ]),
+                        label: {
+                            show: false,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+            **/
+        ]
+    };
+    myChart1.setOption(option);
+    // tools.loopShowTooltip(myChart1, option, {
+    //   loopSeries: true
+    // });
+});
+$(function (){
+    var myChart3 = echarts.init(document.getElementById('business3'));
+    option = {
+        tooltip: {
+            trigger: 'item',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        legend: {
+            top: '5%',
+            left: 'center',
+            textStyle: { color: "#ffffff" },
+        },
+        series: [
+            {
+                //name: '业务收入',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                center: ['50%', '60%'],
+                avoidLabelOverlap: false,
+                label:{            //饼图图形上的文本标签
+                    normal:{
+                        show:false,
+                        position:'center', //标签的位置
+                        textStyle : {
+                            fontWeight : 300 ,
+                            fontSize : 16    //文字的字体大小
+                        },
+                        formatter:'{d}%'
+                    }
+                },
+                emphasis: {
+                    label: {
+                        show: false,
+                        fontSize: '40',
+                        fontWeight: 'bold',
+                        color: "#ffac11"
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [
+                    {%   for i in range(0,4) %}
+                        { value:{{ form.Pie1_num[i]|safe }},name:'{{ form.Pie1_name[i]|safe }}' },
+                    {% endfor %}
+                    {#{ value: 11397087, name: "代理基金" },#}
+                    {#{ value: 1069091, name: "代理保险" },#}
+                    {#{ value: 2660274, name: "代理理财" },#}
+                    {#{ value: 611900, name: "其他业务" }#}
+                ],
+                itemStyle: {
+                    normal: {
+                        color: function(params) {
+                            //自定义颜色
+                            var colorList = ['#F68944', '#FBC10D','#DCE02A','#96E043'];
+                            return colorList[params.dataIndex]
+                        },
+                        label: {
+                            show: false,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    myChart3.setOption(option);
+    tools.loopShowTooltip(myChart3, option, {
+        loopSeries: true
+    });
+});
+//  -----------
+
+$(function (){
+    var myChart2 = echarts.init(document.getElementById('business2'));
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        legend: {
+            textStyle: {fontsize:18, color:'#ffffff'},
+            data: ['交易额(万亿)' , '变化率(%)']
+        },
+        grid:{x:55, x2:50},
+        xAxis: [
+            {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel:{
+                    textStyle: {fontsize:18, color:'#ffffff'}
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '交易额(万亿)',
+                min: 0,
+                max: 2.5,
+                splitNumber : 3,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            },
+            {
+                type: 'value',
+                name: '变化率(%)',
+                min: 0,
+                max: 20,
+                splitNumber : 3,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:5, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        series: [
+            {
+                name: '交易额(万亿)',
+                color: '#ff8302',
+                type: 'bar',
+                barWidth:'40%',
+                data: [
+                    1.32, 1.48, 1.61, 1.67,1.75,2.04
+                ],
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 15
+                            }
+                        },
+                           barBorderRadius: 5,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#fccb05'
+                            },
+                            {
+                                offset: 1,
+                                color: '#f5804d'
+                            }
+                        ]),
+                    }
+                }
+            },
+            {
+                name: '变化率(%)',
+                color: '#F6E331',
+                type: 'line',
+                smooth:true,//设置折线图平滑
+                yAxisIndex: 1,
+                data: [12.50, 12.36, 10.42,8.70, 8.70,16.28],
+                itemStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#248ff7'
+                            },
+                            {
+                                offset: 1,
+                                color: '#6851f1'
+                            }
+                        ]),
+                        label: {
+                            show: false,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    myChart2.setOption(option);
+    // tools.loopShowTooltip(myChart2, option, {
+    //   loopSeries: true
+    // });
+});
+
+//  ------------ƒ
+
+$(function (){
+    var myChart5 = echarts.init(document.getElementById('business5'));
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        legend: {
+            textStyle: {fontsize:18, color:'#ffffff'},
+            data: ['投资金额(亿)' , '变化率(%)']
+        },
+        xAxis: [
+            {
+                type: 'category',
+                //data: ['1月', '2月', '3月', '4月', '5月','6月'],
+                data:{{ form.month2|safe }},
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel:{
+                    textStyle: {fontsize:18, color:'#ffffff'}
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '投资金额',
+                min: 0,
+                max: 500,
+                splitNumber : 3,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            },
+            {
+                type: 'value',
+                name: '变化率(%)',
+                min: -100,
+                max: 100,
+                splitNumber : 3,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:5, color:'rgba(255,255,255,0.5)'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        series: [
+            {
+                name: '投资金额(亿)',
+                color: '#ff8302',
+                type: 'bar',
+                barWidth:'40%',
+                //data: [2.36, 2.77,3.12,3.5,3.99,4.7],
+                data:{{ form.app_invest }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        },
+                         barBorderRadius: 5,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#fccb05'
+                            },
+                            {
+                                offset: 1,
+                                color: '#f5804d'
+                            }
+                        ]),
+                    }
+                }
+            },
+            {
+                name: '变化率(%)',
+                color: '#F6E331',
+                type: 'line',
+                smooth:true,//设置折线图平滑
+                yAxisIndex: 1,
+                //data: [17.10, 17.65,12.56,15.63,28.21,17.65],
+                data:{{ form.app_invest_growth }},
+                itemStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: '#248ff7'
+                            },
+                            {
+                                offset: 1,
+                                color: '#6851f1'
+                            }
+                        ]),
+                        label: {
+                            show: false,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    myChart5.setOption(option);
+    // tools.loopShowTooltip(myChart5, option, {
+    //   loopSeries: true
+    // });
+});
+
+//  -----------
+
+$(function (){
+    var myChart6 = echarts.init(document.getElementById('business6'));
+    option = {
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center',
+            textStyle: { color: "#ffffff" },
+        },
+        series: [
+            {
+                //name: 'App各类型交易金额占比(%)',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                center: ['50%', '60%'],
+                avoidLabelOverlap: false,
+                label:{            //饼图图形上的文本标签
+                    normal:{
+                        show:false,
+                        position:'center', //标签的位置
+                        textStyle : {
+                            fontWeight : 300 ,
+                            fontSize : 16    //文字的字体大小
+                        },
+                        formatter:'{d}%'
+                    }
+                },
+                emphasis: {
+                    label: {
+                        show: false,
+                        fontSize: '40',
+                        fontWeight: 'bold',
+                        color: "#ffac11"
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [
+                    {%   for i in range(0,6) %}
+                        { value:{{ form.Pie2_num[i]|safe }},name:'{{ form.Pie2_name[i]|safe }}' },
+                    {% endfor %}
+                    {#{ value: 36, name: "转账" },#}
+                    {#{ value: 29, name: "理财" },#}
+                    {#{ value: 16, name: "生活缴费" },#}
+                    {#{ value: 14, name: "支付" },#}
+                    {#{ value: 3, name: "其他" },#}
+                    {#{ value: 2, name: "外汇" }#}
+                ],
+                itemStyle: {
+                    normal: {
+                        color: function(params) {
+                            //自定义颜色
+                            var colorList = ['#F68944', '#FBC10D','#DCE02A','#96E043','#42D43F','#10B680'];
+                            return colorList[params.dataIndex]
+                        },
+                        label: {
+                            show: false,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    myChart6.setOption(option);
+    tools.loopShowTooltip(myChart6, option, {
+        loopSeries: true
+    });
+});
+
+    </script>
+<!--<script type="text/javascript" src="../static/js/Charts_yewu.js"></script>-->
+
+{% endblock %}
+
+
