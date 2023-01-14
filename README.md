@@ -11,3 +11,9 @@ Limitations:
 2. Not real-time.
 3. Local database (not flexible)
 
+Tools:
+* Python->Flask
+* HTML
+* Javascript
+* SQL
+Based on Flask frame and 
