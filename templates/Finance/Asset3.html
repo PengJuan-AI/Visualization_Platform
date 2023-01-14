@@ -1,0 +1,287 @@
+
+<div class="map1">
+      <div class="asset_1 a3" id="asset_5">
+          <div class="chart_f" id="asset_5"></div>
+      </div>
+</div>
+
+<div class="column">
+             <div class="panel_small">
+                 <div class="no">
+                    <div class="no-top">
+                        <ul>
+                            <li>{{ form.current | safe}}</li>
+                            <li>{{ form.Avg_5y|safe }}</li>
+                        </ul>
+                    </div>
+                <div class="no-btm">
+                    <ul>
+                        <li>当前利息收入(百万)</li>
+                        <li>近5年年均增长率</li>
+                    </ul>
+                </div>
+            </div>
+                 <div class="no">
+                <div class="no-top">
+                    <ul>
+                        <li>{{ form.YoY|safe }}</li>
+                        <li>{{ form.QoQ|safe }}</li>
+                    </ul>
+                </div>
+                <div class="no-btm">
+                    <ul>
+                        <li>同比增长(%)</li>
+                        <li>环比增长（%）</li>
+                    </ul>
+                </div>
+            </div>
+                 <div class="no">
+                  <div class="no-top">
+                    <ul>
+                        <li>32.50%</li>
+                    </ul>
+                </div>
+                <div class="no-btm">
+                    <ul>
+
+                        <li>预测增长率</li>
+                    </ul>
+                </div>
+            </div>
+            </div>
+             <div class="panel_big">
+                <div class="charttitle">利息收入</div>
+                <div class="chart_big" id="asset_6"></div>
+                <div class="panelfoot"></div>
+                <div class="panelfoot"></div>
+            </div>
+        </div>
+<script>
+    $(function (){
+    var myChart5 = echarts.init(document.getElementById('asset_5'));
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        legend: {
+            textStyle: {fontsize:18, color:'#ffffff'},
+            data: ['利息收入(百万元)' , '利息支出(百万元)']
+        },
+        yAxis: [
+            {
+                type: 'category',
+                //data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                data:{{ form.month|safe }},
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLabel:{
+                    textStyle: {fontsize:18, color:'#ffffff'}
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }
+        ],
+        xAxis: [
+            {
+                type: 'value',
+                name: '利息收入(百万元)',
+                min: 0,
+                max: {{form.xAxis1|max}},
+                splitNumber : 5,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:18, color:'#ffffff'},
+                    formatter: '{value}'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            },
+            /**
+            {
+                type: 'value',
+                name: '增长率(%)',
+                min: -25,
+                max: 15,
+                splitNumber : 5,
+                nameTextStyle: {
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'Source Han Sans CN', // 字体
+                    fontSize: 12, // 大小
+                    // padding: [0, 0, 20, 0]
+                },
+                axisLabel: {
+                    textStyle: {fontsize:5, color:'#ffffff'},
+                    formatter: '{value}%'
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show:false
+                }
+            }**/
+        ],
+        series:  [
+            {
+                name: '利息收入(百万元)',
+                color: '#ff8302',
+                type: 'bar',
+                barWidth:'30%',
+                //data: [1.78, 1.82, 1.89,2.08, 2.16, 2.23],
+                data:{{ form.xAxis1 }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,		//开启显示
+                            position: 'right',	//在右边显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        },
+                         barBorderRadius: 25,
+                            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                            {
+                                offset: 0,
+                                color: '#fccb05'
+                            },
+                            {
+                                offset: 1,
+                                color: '#f5804d'
+                            }
+                        ]),
+                    }
+
+                }
+            },
+            {
+                name: '利息支出(百万元)',
+                color: '#ff8302',
+                type: 'bar',
+                barWidth:'30%',
+                //data: [1.78, 1.82, 1.89,2.08, 2.16, 2.23],
+                data:{{ form.xAxis2 }},
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,		//开启显示
+                            position: 'right',	//在右边显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        },
+                         barBorderRadius: 25,
+                            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                            {
+                                offset: 0,
+                                color: '#8bd46e'
+                            },
+                            {
+                                offset: 1,
+                                color: '#09bcb7'
+                            }
+                        ]),
+                    }
+
+                }
+            },
+
+        ]
+    };
+    myChart5.setOption(option);
+    tools.loopShowTooltip(myChart5, option, {
+        loopSeries: true
+    });
+});$(function (){
+    var myChart6 = echarts.init(document.getElementById('asset_6'));
+    option = {
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center',
+            textStyle: { color: "#ffffff" },
+        },
+        series: [
+            {
+                name: '利润来源',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                label:{            //饼图图形上的文本标签
+                    normal:{
+                        show:true,
+                        position:'inner', //标签的位置
+                        textStyle : {
+                            fontWeight : 300 ,
+                            fontSize : 16    //文字的字体大小
+                        },
+                        formatter:'{d}%'
+                    }
+                },
+                emphasis: {
+                    label: {
+                        show: false,
+                        fontSize: '40',
+                        fontWeight: 'bold',
+                        color: "#ffac11"
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [
+                    { value: 52, name: '贷款利息' },
+                    { value: 34, name: '存放央行' },
+                    { value: 10, name: '同业资产' },
+                    { value: 4, name: '证券投资' }
+                ],
+                itemStyle: {
+                    normal: {
+                        color: function(params) {
+                            //自定义颜色
+                            var colorList = ['#F68944', '#FBC10D','#DCE02A','#96E043','#42D43F','#10B680'];
+                            return colorList[params.dataIndex]
+                        },
+                        label: {
+                            show: true,		//开启显示
+                            position: 'top',	//在上方显示
+                            textStyle: {	    //数值样式
+                                color: 'white',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    myChart6.setOption(option);
+    tools.loopShowTooltip(myChart6, option, {
+        loopSeries: true
+    });
+});
+
+</script>

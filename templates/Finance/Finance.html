@@ -1,0 +1,66 @@
+{% extends "Index.html" %}
+
+{% block nav %}
+    <nav>
+        <ul>
+            <li class="_left"><a  href={{ url_for('index') }}>主要指标</a></li>
+            <li class="nav_active _left"><a  href={{ url_for("finance") }}>财务情况</a></li>
+
+        </ul>
+        <ul><li class="index_middle"><h1 style="font-size:24px;text-align:right">2021年SWIFT银行财务数据可视化</h1></li></ul>
+        <ul>
+            <li class="_right"><a href={{ url_for("predict") }}>预测分析</a></li>
+            <li class=" _right"><a href={{ url_for("business") }}>业务情况</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block subnav %}
+<div class="subnav_wrapper">
+    <ul class="subnav">
+<!--        <li class="subnav subnav_item">资产总额</li>-->
+        <li class="subnav subnav_item">资产总额</li>
+        <li class="subnav subnav_item">营业收入</li>
+        <li class="subnav subnav_item">利息收入</li>
+        <li class="subnav subnav_item">非利息收入</li>
+        <li class="subnav subnav_item">流动性</li>
+    </ul>
+</div>
+
+{% endblock %}
+{% block main %}
+
+    <script>
+        $.get('/asset1', function (html) {
+            //获取资产规模的数据，映射到可视化图表
+            $(".div1").html(html);
+        });
+        $.get('/asset2', function (html) {
+            //获取营业收入的数据，映射到可视化图表
+            $(".div2").html(html);
+        });
+        $.get('/asset3', function (html) {
+            //获取利息收入的数据，映射到可视化图表
+            $(".div3").html(html);
+        });
+        $.get('/asset4', function (html) {
+            //获取非利息收入的数据，映射到可视化图表
+            $(".div4").html(html);
+        });
+        $.get('/asset5', function (html) {
+            //获取流动性的数据，映射到可视化图表
+            $(".div5").html(html);
+        });
+    </script>
+
+    <div class="mainbox div1" ></div>
+    <div class="mainbox div2" ></div>
+    <div class="mainbox div3"></div>
+    <div class="mainbox div4"></div>
+    <div class="mainbox div5"></div>
+
+<script type="text/javascript" src="../static/js/scroll.js"></script>
+
+{% endblock %}
+
+
