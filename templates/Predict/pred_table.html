@@ -1,0 +1,10 @@
+<table>
+    <thead><tr><th>月份</th><th>差额(万元)</th></tr></thead>
+    <tbody>
+    {% for row in form %}
+        <tr><td>{{ row.month }}月</td><td>{{ row.diff }}</td></tr>
+{#                        {% set count.value=count.value + 1 %}#}
+    {% endfor %}
+
+    </tbody>
+</table>
