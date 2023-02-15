@@ -1,5 +1,5 @@
 # Visualization_Platform
-Target: Senior managers and financial department directors.
+Target: Senior managers and financial department directors.  
 Function: Present a overview of bank's performance during certain period. 
 Features:
 1. Users can interact with this interface, including select, enter expected number, and filtering.
