@@ -12,6 +12,8 @@ The goal of this visualization platform is to help bank senior managers to under
 3. **Risk Management**: based on loan completion in the previous months and loan issuing rates, the platform will suggest the possibility(high, medium, low) of failing the loan issuing goal of this year.
 
 ## Video Demo
+Click the picture to watch the video demo:
+[![](overview.png)](https://youtu.be/zxmO5vWvibE)
 
 ### Limitations:
 1. Only web page.
